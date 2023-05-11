@@ -19,14 +19,11 @@ class Command(BaseCommand):
             UrsipData.objects.filter(date=total['date']).update(total_qliq=total['total_qliq'],
                                                                 total_qoil=total['total_qoil'])
 
-        print(result)
-
     def handle(self, *args, **options):
-        date = datetime(2023, 5, randint(1, 10))
         data = pd.read_excel(r'table_parser/src/table.xlsx', header=[0, 2], engine='openpyxl')
         data.columns = ['_'.join(col).strip() for col in data.columns.values]
         for i, row in data.iterrows():
-            print(row)
+            date = datetime(2023, 5, randint(1, 10))
             res = UrsipData(
                 company=row['company_Unnamed: 1_level_1'],
                 fact_qliq_data1=row['fact_data1'],
