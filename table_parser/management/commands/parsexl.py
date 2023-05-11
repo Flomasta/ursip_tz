@@ -41,18 +41,3 @@ class Command(BaseCommand):
             )
             res.save()
         self.table_update()
-
-
-from django.db.models import Sum
-from datetime import datetime
-
-# Рассчитать общий объем Qliq и Qoil для каждой даты
-totals = UrsipData.objects.filter(date__month=datetime.now().month).values('date').annotate(
-    total_qliq=Sum('fact_qliq_data1') + Sum('fact_qliq_data2') + Sum('forecast_qliq_data1') + Sum(
-        'forecast_qliq_data2'),
-    total_qoil=Sum('fact_qoil_data1') + Sum('fact_qoil_data2') + Sum('forecast_qoil_data1') + Sum(
-        'forecast_qoil_data2'))
-
-# Сохранить рассчитанные значения в базу данных
-for total in totals:
-    UrsipData.objects.filter(date=total['date']).update(total_qliq=total['total_qliq'], total_qoil=total['total_qoil'])
