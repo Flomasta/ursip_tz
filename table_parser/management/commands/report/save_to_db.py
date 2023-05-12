@@ -1,8 +1,12 @@
-from .dategen import dategen
 from table_parser.models import UrsipData
-from datetime import datetime
 from django.db.models import Sum
 from tqdm import tqdm
+from datetime import datetime
+from random import randint
+
+
+def dategen():
+    return datetime(2023, 5, randint(1, 10))
 
 
 def update_report():

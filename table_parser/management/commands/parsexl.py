@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--path", type=str, default=r'table_parser\data\table.xlsx',
-                            help='Put the path relative to the root of the project')
+                            help='Put the path from content root')
 
     def handle(self, *args, **options):
         file_path = options.get('path')
