@@ -19,5 +19,5 @@ class Command(BaseCommand):
             save_report,
             update_report
         )
-        report.get_data(file_path)
+        report.create_report(file_path)
         print('success!')
