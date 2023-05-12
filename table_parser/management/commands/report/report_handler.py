@@ -14,3 +14,4 @@ class ReportHandler:
         file_path = os.path.join(BASE_DIR, path)
         data = self.load_data(file_path)
         self.save_report(data)
+        self.update_report()
