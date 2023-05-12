@@ -1,11 +1,11 @@
+import openpyxl
 import pandas as pd
 from django.test import TestCase
-# from unittest import TestCase
+from table_parser.management.commands.parsexl import ReportHandler
 from table_parser.management.commands.report.file_parser import parse_file
 from table_parser.management.commands.report.save_to_db import save_report, update_report
-import openpyxl
+
 from table_parser.models import UrsipData
-from table_parser.management.commands.parsexl import ReportHandler
 
 
 # Create your tests here.
