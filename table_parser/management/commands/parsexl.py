@@ -1,40 +1,23 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Sum
-from table_parser.models import UrsipData
-import pandas as pd
-from datetime import datetime
-from random import randint
+
+from .report.report_handler import ReportHandler
+from .report.file_parser import parse_file
+from .report.save_to_db import save_report, update_report
 
 
 class Command(BaseCommand):
     help = "Parse excel file"
 
-    def table_update(self):
-        totals = UrsipData.objects.filter(date__month=datetime.now().month).values('date').annotate(
-            total_qliq=Sum('fact_qliq_data1') + Sum('fact_qliq_data2') + Sum('forecast_qliq_data1') + Sum(
-                'forecast_qliq_data2'),
-            total_qoil=Sum('fact_qoil_data1') + Sum('fact_qoil_data2') + Sum('forecast_qoil_data1') + Sum(
-                'forecast_qoil_data2'))
-        for total in totals:
-            UrsipData.objects.filter(date=total['date']).update(total_qliq=total['total_qliq'],
-                                                                total_qoil=total['total_qoil'])
+    def add_arguments(self, parser):
+        parser.add_argument("--path", type=str, default=r'table_parser\data\table.xlsx',
+                            help='Put the path relative to the root of the project')
 
     def handle(self, *args, **options):
-        data = pd.read_excel(r'table_parser/src/table.xlsx', header=[0, 2], engine='openpyxl')
-        data.columns = ['_'.join(col).strip() for col in data.columns.values]
-        for i, row in data.iterrows():
-            date = datetime(2023, 5, randint(1, 10))
-            res = UrsipData(
-                company=row['company_Unnamed: 1_level_1'],
-                fact_qliq_data1=row['fact_data1'],
-                fact_qliq_data2=row['fact_data2'],
-                fact_qoil_data1=row['fact_data1.1'],
-                fact_qoil_data2=row['fact_data2.1'],
-                forecast_qliq_data1=row['forecast_data1'],
-                forecast_qliq_data2=row['forecast_data2'],
-                forecast_qoil_data1=row['forecast_data1.1'],
-                forecast_qoil_data2=row['forecast_data2.1'],
-                date=date
-            )
-            res.save()
-        self.table_update()
+        file_path = options.get('path')
+        report = ReportHandler(
+            parse_file,
+            save_report,
+            update_report
+        )
+        report.get_data(file_path)
+        print('success!')
